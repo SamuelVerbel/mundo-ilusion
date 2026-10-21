@@ -1,0 +1,20 @@
+<a href="<?= url('admin/pedidos') ?>" class="link-mi">← Pedidos</a>
+<div class="row g-3 mt-1"><div class="col-lg-8">
+  <div class="card p-3 mb-3"><div class="d-flex justify-content-between"><h5>Pedido #<?= (int) $p['id_pedido'] ?></h5><div><?= badge_pedido($p['estado']) ?> <?= badge_pago($p['estado_pago']) ?></div></div>
+    <table class="table table-sm mt-2 mb-0"><thead><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Precio</th><th class="text-end">Subtotal</th></tr></thead><tbody>
+    <?php foreach ($detalles as $d): ?><tr><td><?= e($d['nombre_producto']) ?></td><td class="text-center"><?= (int) $d['cantidad'] ?></td><td class="text-end"><?= cop($d['precio_unitario']) ?></td><td class="text-end"><?= cop($d['subtotal']) ?></td></tr><?php endforeach; ?>
+    </tbody><tfoot><tr class="fw-bold"><td colspan="3" class="text-end">Total</td><td class="text-end"><?= cop($p['total']) ?></td></tr></tfoot></table></div>
+  <div class="card p-3 mb-3"><h6>Historial de estados</h6><ul class="list-unstyled small mb-0"><?php foreach ($historial as $h): ?><li class="mb-1"><i class="bi bi-dot"></i> <b><?= e(ESTADOS_PEDIDO[$h['estado_nuevo']][0] ?? $h['estado_nuevo']) ?></b> · <?= fecha($h['fecha_cambio'], true) ?> · <?= e($h['usuario'] ?? 'Sistema') ?><?= $h['nota'] ? ' <span class="text-muted">— ' . e($h['nota']) . '</span>' : '' ?></li><?php endforeach; ?></ul></div>
+  <div class="card p-3"><h6>Transacciones de pago</h6><?php if (!$pagos): ?><p class="small text-muted mb-0">Sin intentos de pago.</p><?php else: ?><table class="table table-sm small mb-0"><thead><tr><th>Referencia</th><th>Método</th><th>Monto</th><th>Estado</th><th>Fecha</th></tr></thead><tbody>
+    <?php foreach ($pagos as $g): ?><tr><td><?= e($g['referencia']) ?></td><td><?= e($g['metodo_pago'] ?? '—') ?></td><td><?= cop($g['monto']) ?></td><td><?= badge_pago($g['estado']) ?></td><td><?= fecha($g['fecha_pago'] ?? $g['fecha_creacion'], true) ?></td></tr><?php endforeach; ?></tbody></table><?php endif; ?></div>
+</div><div class="col-lg-4">
+  <div class="card p-3 mb-3"><h6>Cliente</h6><p class="small mb-1"><b><?= e($p['cliente']) ?></b></p><p class="small mb-1"><i class="bi bi-envelope"></i> <?= e($p['cliente_correo']) ?></p><p class="small mb-0"><i class="bi bi-telephone"></i> <?= e($p['cliente_telefono']) ?></p></div>
+  <div class="card p-3 mb-3"><h6>Entrega</h6><p class="small mb-1"><b><?= $p['modalidad_entrega'] === 'domicilio' ? 'Domicilio' : 'Recogida en tienda' ?></b> · <?= fecha($p['fecha_entrega']) ?></p>
+    <?php if ($p['modalidad_entrega'] === 'domicilio'): ?><p class="small mb-1"><?= e($p['dir_direccion']) ?> · <?= e($p['dir_barrio']) ?><?= $p['dir_referencia'] ? ' (' . e($p['dir_referencia']) . ')' : '' ?></p><?php endif; ?>
+    <?php if ($p['dedicatoria']): ?><p class="small mb-1">💌 “<?= e($p['dedicatoria']) ?>”</p><?php endif; ?><?php if ($p['observaciones']): ?><p class="small text-muted mb-0"><?= e($p['observaciones']) ?></p><?php endif; ?></div>
+  <?php if ($siguientes): ?><div class="card p-3 mb-3"><h6>Cambiar estado</h6><form method="post" action="<?= url('admin/pedidos/' . (int) $p['id_pedido'] . '/estado') ?>"><?= csrf_field() ?>
+    <select name="estado" class="form-select mb-2"><?php foreach ($siguientes as $s): ?><option value="<?= $s ?>"><?= e(ESTADOS_PEDIDO[$s][0]) ?></option><?php endforeach; ?></select>
+    <input name="nota" class="form-control mb-2" placeholder="Nota (opcional)" maxlength="255"><button class="btn btn-mi w-100">Actualizar estado</button></form></div>
+  <?php elseif ($p['estado'] === 'pendiente_pago'): ?><div class="alert alert-warning small">Esperando el pago del cliente.</div><?php endif; ?>
+  <?php if (Auth::is('administrador') && $p['estado_pago'] === 'aprobado' && $p['estado'] === 'cancelado'): ?><form method="post" action="<?= url('admin/pedidos/' . (int) $p['id_pedido'] . '/devolucion') ?>" onsubmit="return confirm('¿Confirmas que ya devolviste el dinero al cliente?')"><?= csrf_field() ?><button class="btn btn-outline-dark w-100"><i class="bi bi-arrow-counterclockwise"></i> Registrar devolución del dinero</button></form><?php endif; ?>
+</div></div>

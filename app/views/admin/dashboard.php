@@ -1,0 +1,7 @@
+<div class="row g-3 mb-4">
+  <?php $cards = [['Pedidos por atender', ($s['por_estado']['recibido'] ?? 0) . '', 'bell', 'danger'], ['Ventas de hoy', cop($s['ventas_hoy']), 'cash-coin', 'success'], ['Ventas del mes', cop($s['ventas_mes']), 'graph-up', 'primary'], ['Clientes', $s['clientes'], 'people', 'secondary']];
+  foreach ($cards as [$t, $v, $i, $c]): ?><div class="col-6 col-lg-3"><div class="card p-3 stat"><div class="text-<?= $c ?> fs-3"><i class="bi bi-<?= $i ?>"></i></div><div class="small text-muted"><?= $t ?></div><div class="fs-4 fw-bold"><?= $v ?></div></div></div><?php endforeach; ?></div>
+<div class="card p-3"><div class="d-flex justify-content-between"><h5>Pedidos recientes</h5><a href="<?= url('admin/pedidos') ?>" class="link-mi">Ver todos →</a></div>
+<div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>#</th><th>Cliente</th><th>Entrega</th><th>Total</th><th>Estado</th><th>Pago</th><th></th></tr></thead><tbody>
+<?php foreach ($recientes as $p): ?><tr><td>#<?= (int) $p['id_pedido'] ?></td><td><?= e($p['cliente']) ?></td><td><?= fecha($p['fecha_entrega']) ?></td><td><?= cop($p['total']) ?></td><td><?= badge_pedido($p['estado']) ?></td><td><?= badge_pago($p['estado_pago']) ?></td><td><a class="btn btn-sm btn-outline-mi" href="<?= url('admin/pedidos/' . (int) $p['id_pedido']) ?>">Gestionar</a></td></tr><?php endforeach; ?>
+<?php if (!$recientes): ?><tr><td colspan="7" class="text-muted text-center py-4">Aún no hay pedidos.</td></tr><?php endif; ?></tbody></table></div></div>

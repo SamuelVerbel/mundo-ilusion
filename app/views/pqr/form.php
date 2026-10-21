@@ -1,0 +1,8 @@
+<div class="container py-4" style="max-width:820px"><h1 class="section-title">Peticiones, quejas, reclamos y sugerencias</h1>
+  <div class="card p-4 mt-3"><form method="post" action="<?= url('pqr') ?>" class="row g-3"><?= csrf_field() ?>
+    <div class="col-md-4"><label class="form-label">Tipo</label><select name="tipo" class="form-select" required><?php foreach (['peticion' => 'Petición', 'queja' => 'Queja', 'reclamo' => 'Reclamo', 'sugerencia' => 'Sugerencia'] as $k => $v): ?><option value="<?= $k ?>" <?= old('tipo') === $k ? 'selected' : '' ?>><?= $v ?></option><?php endforeach; ?></select></div>
+    <div class="col-md-8"><label class="form-label">Asunto</label><input name="asunto" class="form-control" maxlength="150" value="<?= e(old('asunto')) ?>" required></div>
+    <div class="col-12"><label class="form-label">Mensaje</label><textarea name="mensaje" rows="4" class="form-control" maxlength="2000" required><?= e(old('mensaje')) ?></textarea></div>
+    <div class="col-12"><button class="btn btn-mi">Enviar</button></div></form></div>
+  <?php if ($mias): ?><h5 class="mt-4">Mis mensajes</h5><?php foreach ($mias as $m): ?><div class="card p-3 mb-2"><div class="d-flex justify-content-between"><b><?= e($m['asunto']) ?></b><span class="badge text-bg-<?= $m['estado'] === 'pendiente' ? 'warning' : 'success' ?>"><?= e(ucfirst($m['estado'])) ?></span></div>
+    <small class="text-muted"><?= e(ucfirst($m['tipo'])) ?> · <?= fecha($m['fecha_creacion'], true) ?></small><p class="mb-1 mt-1"><?= e($m['mensaje']) ?></p><?php if ($m['respuesta']): ?><div class="alert alert-light border mb-0 small"><b>Respuesta:</b> <?= e($m['respuesta']) ?></div><?php endif; ?></div><?php endforeach; endif; ?></div>

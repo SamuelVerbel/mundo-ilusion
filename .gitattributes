@@ -1,0 +1,9 @@
+# Evita problemas de saltos de línea entre Windows y otros sistemas
+* text=auto
+*.sql text eol=lf
+*.php text eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff binary
+*.woff2 binary
