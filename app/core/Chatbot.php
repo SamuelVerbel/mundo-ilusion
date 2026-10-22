@@ -129,7 +129,7 @@ class Chatbot
         }
         if (self::tiene($t, ['extra', 'adicional', 'agregar', 'globo extra', 'rosa', 'cerveza', 'peluche']) && !self::tiene($t, ['pedido'])) {
             $e = Producto::adicionales();
-            if ($e) return "Puedes agregar detalles extra a cualquier regalo ✨\n" . implode("\n", array_map(fn($p) => '• ' . self::e($p['nombre']) . ': ' . cop($p['precio']), array_slice($e, 0, 6))) . "\n\nLos eliges en la página de cada producto.";
+            if ($e) return "Puedes agregar detalles extra a cualquier regalo ✨\n" . implode("\n", array_map(fn($p) => '• ' . self::e($p['nombre']) . ': ' . cop($p['precio']), array_slice($e, 0, 6))) . "\n\nLos eliges en la página de cada producto." . (self::tiene($t, ['cerveza', 'licor', 'alcohol']) ? "\n\n" . self::e(conf('aviso_licor')) : '');
         }
         if (self::tiene($t, ['horario', 'hora de atencion', 'abren', 'abierto', 'cierran', 'atienden'])) {
             return conf('tienda_horarios') ? 'Nuestro horario de atención es: **' . self::e(conf('tienda_horarios')) . '**.' : 'Aún no tengo el horario cargado 😅. Escríbenos y te confirmamos.' . self::wa();
@@ -173,7 +173,10 @@ class Chatbot
         if ($palabras) {
             $or = implode(' OR ', array_fill(0, count($palabras), '(p.nombre LIKE ? OR p.descripcion LIKE ? OR EXISTS (SELECT 1 FROM producto_categoria qc JOIN categoria qa ON qa.id_categoria = qc.id_categoria WHERE qc.id_producto = p.id_producto AND qa.nombre LIKE ?))')); $par = [];
             foreach ($palabras as $w) { $par[] = "%$w%"; $par[] = "%$w%"; $par[] = "%$w%"; }
-            $r = Database::all(Producto::BASE . " WHERE p.estado = 'activo' AND " . Producto::NO_ADICIONAL . " AND ($or) ORDER BY p.nombre LIMIT 4", $par);
+            // puntaje: coincidencia en el nombre (3) + en la categoría (2) + en la descripción (1)
+            $score = implode(' + ', array_fill(0, count($palabras), '((p.nombre LIKE ?) * 3 + EXISTS (SELECT 1 FROM producto_categoria qc JOIN categoria qa ON qa.id_categoria = qc.id_categoria WHERE qc.id_producto = p.id_producto AND qa.nombre LIKE ?) * 2 + (p.descripcion LIKE ?))')); $ps = [];
+            foreach ($palabras as $w) { $ps[] = "%$w%"; $ps[] = "%$w%"; $ps[] = "%$w%"; }
+            $r = Database::all(str_replace('FROM producto p', ', (' . $score . ') AS puntaje FROM producto p', Producto::BASE) . " WHERE p.estado = 'activo' AND " . Producto::NO_ADICIONAL . " AND ($or) ORDER BY puntaje DESC, p.nombre LIMIT 4", array_merge($ps, $par));
             if ($r) {
                 $l = array_map(function ($p) {
                     $f = Producto::precioFinal((float) $p['precio'], (float) $p['descuento']);

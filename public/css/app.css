@@ -1,6 +1,6 @@
 /* ===== Mundo Ilusión · paleta tomada del logo y del catálogo ===== */
-:root{color-scheme:light;--mi-brand:#F98BBF;--mi-primary:#DB3F86;--mi-primary-dark:#B5266B;--mi-magenta:#A8226F;--mi-lavender:#8E6BBE;--mi-gold:#D9A441;--mi-teal:#2FA4A9;
-  --mi-bg:#FFF6FA;--mi-soft:#FDE3EE;--mi-dark:#2B2530;--mi-surface:#fff;--mi-text:#2B2530;--mi-nav-bg:rgba(255,255,255,.94);--mi-primary-text:#DB3F86;--mi-lav-soft:#EBDDFB;--mi-admin-bg:#F6F2F8;--mi-hero-a:#FFF6FA;--mi-hero-b:#FDE3EE;--mi-hero-glow:#f3e8ff}
+:root{color-scheme:light;--mi-brand:#F98BBF;--mi-primary:#CC2F78;--mi-primary-dark:#A82263;--mi-magenta:#A8226F;--mi-lavender:#7B58AA;--mi-gold:#D9A441;--mi-teal:#2FA4A9;
+  --mi-bg:#FFF6FA;--mi-soft:#FDE3EE;--mi-dark:#2B2530;--mi-surface:#fff;--mi-text:#2B2530;--mi-nav-bg:rgba(255,255,255,.94);--mi-primary-text:#CC2F78;--mi-lav-soft:#EBDDFB;--mi-admin-bg:#F6F2F8;--mi-hero-a:#FFF6FA;--mi-hero-b:#FDE3EE;--mi-hero-glow:#f3e8ff}
 body{font-family:'Quicksand',system-ui,sans-serif;background:var(--mi-bg);color:var(--mi-text);font-weight:500}
 h1,h2,h3,h4,h5,.mi-logo,.section-title{font-family:'Playfair Display',Georgia,serif}
 .mi-nav{background:var(--mi-nav-bg);backdrop-filter:blur(8px);box-shadow:0 2px 14px rgba(219,63,134,.12)}
@@ -116,3 +116,8 @@ h1,h2,h3,h4,h5,.mi-logo,.section-title{font-family:'Playfair Display',Georgia,se
 .chat-send{width:44px;border-radius:50%!important;padding:0}
 .chat-aviso{font-size:.68rem;text-align:center;margin:0;padding:0 .8rem .5rem;opacity:.65}
 @media(max-width:576px){.chat-fab-txt{display:none}.chat-fab{padding:.9rem}.chat-panel{right:8px;bottom:78px;height:calc(100vh - 100px)}}
+/* Logo sobre la barra lateral del panel (fondo siempre oscuro) */
+.admin-side .mi-logo{color:#FF86BC!important}.admin-side .mi-logo span{color:#C9B2F0}
+/* Contraste: botones secundarios en oscuro y outline de marca sobre fondos lavanda */
+[data-bs-theme=dark] .btn-outline-secondary{--bs-btn-color:#C8BFD2;--bs-btn-border-color:#8D8394;--bs-btn-hover-bg:#4A4057;--bs-btn-hover-color:#fff;--bs-btn-hover-border-color:#8D8394}
+.btn-outline-mi{color:var(--mi-primary-dark)}[data-bs-theme=dark] .btn-outline-mi{color:var(--mi-primary-text)}.btn-outline-mi:hover{color:#fff!important}

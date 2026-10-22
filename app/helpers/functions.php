@@ -3,7 +3,13 @@
 
 function e($v): string { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }          // protege contra XSS
 function url(string $path = ''): string { return BASE_URL . '/' . ltrim($path, '/'); }
-function asset(string $path): string { return url($path); }
+/** URL de un archivo de public/. Para css/js agrega ?v=fecha-de-modificación: el navegador descarga la versión nueva apenas cambia el archivo. */
+function asset(string $path): string
+{
+    $v = '';
+    if (preg_match('/\.(css|js)$/', $path) && is_file($f = ROOT_PATH . '/public/' . ltrim($path, '/'))) $v = '?v=' . filemtime($f);
+    return url($path) . $v;
+}
 function absolute_url(string $path = ''): string {
     $base = env('APP_URL');
     if (!$base) {
